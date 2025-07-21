@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import SideBar from "./(components)/sidebar/SideBar"; // تأكد من المسار الصحيح
+import LayoutClient from "./layout-client"; // هذا المكون يحوي logic التحقق من التوكن
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,20 +20,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="ar" dir="rtl">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <div className="flex h-screen">
-          <SideBar />
-          <main className="flex-1 overflow-y-auto p-4 bg-gray-50">
-            {children}
-          </main>
-        </div>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <LayoutClient>{children}</LayoutClient>
       </body>
     </html>
   );

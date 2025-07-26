@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { getDecryptedToken } from "./useDelete";
 
-export default function useUpdateFaq() {
+export default function useUpdateMultipart() {
   const [response, setResponse] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 

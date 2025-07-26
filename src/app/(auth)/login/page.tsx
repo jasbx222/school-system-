@@ -6,7 +6,7 @@ import Image from "next/image";
 import logo from "../../../../public/logo.png";
 import useLogin from "./useLogin";
 
-export default function LoginPage() {
+export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const data = { email, password };
@@ -31,7 +31,7 @@ export default function LoginPage() {
             className="rounded-full border-4 border-yellow-400 shadow-lg animate-pulse"
           />
           <h2 className="text-xl font-bold text-yellow-400 mt-3">
-            مدرسة المستقبل
+        نظام ادارة المدارس
           </h2>
           <p className="text-sm text-yellow-200">تسجيل الدخول إلى النظام</p>
         </div>
@@ -60,18 +60,22 @@ export default function LoginPage() {
               placeholder="••••••••"
             />
           </div>
+<button
+  type="submit"
+  disabled={loading}
+  className={`w-full flex justify-center items-center gap-2 px-4 py-2 rounded-xl font-bold transition
+    ${loading ? "bg-yellow-300 cursor-not-allowed" : "bg-yellow-400 hover:bg-yellow-300"}
+    text-[#0F1A35]`}
+>
+  <LogIn size={20} />
+  {loading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
+</button>
 
-          <button
-            type="submit"
-            className="w-full flex justify-center items-center gap-2 px-4 py-2 rounded-xl bg-yellow-400 text-[#0F1A35] font-bold hover:bg-yellow-300 transition"
-          >
-            <LogIn size={20} />
-            تسجيل الدخول
-          </button>
         </form>
 
         <p className="text-center text-xs text-yellow-200">
-          © جميع الحقوق محفوظة - مدرسة المستقبل 2025
+          © 
+          BandTech-Company
         </p>
       </div>
     </div>

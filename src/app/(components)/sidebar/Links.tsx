@@ -2,8 +2,25 @@ import { PencilRuler } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react'
 import clsx from "clsx";
+import axios from 'axios';
+import { getDecryptedToken } from '@/app/hooks/useDelete';
+import { useRouter } from 'next/navigation';
 const Links = () => {
+  const navigate =useRouter();
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+   const handleLogout = () => {
+    axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}logout`, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + getDecryptedToken(),
+      },
+    }).then(() => {
+      localStorage.clear();
+      navigate.push('/login');
+    }).catch(console.log);
+  };
   return (
 <li>
   <div className="relative">
@@ -65,11 +82,27 @@ const Links = () => {
         </li>
         <li>
           <Link
-            href="/class_section"
+            href="/semesters"
             className="block px-3 py-2 rounded hover:bg-yellow-400/30 transition"
           >
              الفصول الدراسية 
           </Link>
+        </li>
+        <li>
+          <Link
+            href="/invoice"
+            className="block px-3 py-2 rounded hover:bg-yellow-400/30 transition"
+          >
+           الفواتير
+          </Link>
+        </li>
+        <li>
+          <button
+            onClick={handleLogout}
+            className="block px-3 py-2 rounded hover:bg-red-400/30 text-red-500 transition"
+          >
+              تسجيل الخروج 
+          </button>
         </li>
       </ul>
     )}

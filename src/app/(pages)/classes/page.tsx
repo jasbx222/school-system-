@@ -1,48 +1,103 @@
 "use client";
 
-import { PlusCircle, Building2 } from "lucide-react";
+import { FormEvent, useState } from "react";
+import useGetOffer from "@/app/hooks/useGetOffer";
+import { Building2, Plus } from "lucide-react";
+import usePost from "@/app/hooks/usePost";
+
+interface Class {
+  id: number;
+  title: string;
+  students_count: number;
+}
+
+interface ClassData {
+  classes: Class[];
+}
 
 export default function Page() {
-  const classes = [
-    { name: "الأول ابتدائي", students: 30 },
-    { name: "الثاني ابتدائي", students: 28 },
-    { name: "الثالث ابتدائي", students: 26 },
-    { name: "الرابع ابتدائي", students: 32 },
-    { name: "الخامس ابتدائي", students: 27 },
-    { name: "السادس ابتدائي", students: 31 },
-  ];
+  const { data: classes, loading,refetch } = useGetOffer<ClassData>(
+    `${process.env.NEXT_PUBLIC_BASE_URL}classes`
+  );
+  // const {add}=usePost();
+
+  // const [showModal, setShowModal] = useState(false);
+  // const [newClassName, setNewClassName] = useState("");
+
+  // const handleAddClass =async (e:FormEvent) => {
+  //   e.preventDefault();
+  //   const data={
+  //     title:newClassName
+  //   }
+  //  await add( `${process.env.NEXT_PUBLIC_BASE_URL}classes`,data);
+  //  refetch()
+  //   setShowModal(false);
+  //   setNewClassName("");
+  // };
+
+  if (loading)
+    return (
+      <div className="text-center py-10 text-gray-600">جاري تحميل البيانات...</div>
+    );
 
   return (
-    <main className="p-6 bg-gradient-to-br from-[#f5f8ff] to-[#e0e7ff] min-h-screen">
+    <main className="min-h-screen bg-gradient-to-br from-[#f5f8ff] to-[#e0e7ff] p-6">
       <div className="container mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        {/* العنوان وزر الإضافة */}
+        <div className="mb-8 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-[#0F1A35]">إدارة الصفوف</h1>
-          <button className="flex items-center gap-2 bg-[#0F5BFF] hover:bg-[#0849d6] text-white px-4 py-2 rounded-lg shadow transition">
-            <PlusCircle size={18} />
-            إضافة صف جديد
-          </button>
+        
         </div>
 
-        {/* Grid of classes */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {classes.map((cls, i) => (
+        {/* بطاقات الصفوف */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+          {classes?.classes.map((cls) => (
             <div
-              key={i}
-              className="bg-white border-r-8 border-[#0F5BFF] p-5 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center gap-4"
+              key={cls.id}
+              className="flex items-center gap-4 rounded-lg border-r-8 border-[#0F5BFF] bg-white p-5 shadow-md transition-all hover:shadow-lg"
             >
               <Building2 className="text-[#0F5BFF]" size={32} />
-              <div className="text-right w-full">
-                <p className="text-gray-500 text-sm">الصف</p>
-                <p className="text-lg font-semibold">{cls.name}</p>
-                <p className="text-sm mt-1 text-gray-400">
-                  عدد الطلاب: {cls.students}
+              <div className="w-full text-right">
+                <p className="text-sm text-gray-500">الصف</p>
+                <p className="text-lg font-semibold">{cls.title}</p>
+                <p className="mt-1 text-sm text-gray-400">
+                  عدد الطلاب: {cls.students_count}
                 </p>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* نافذة منبثقة */}
+      {/* {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <h2 className="text-xl font-bold text-[#0F1A35] mb-4">إضافة صف جديد</h2>
+            <input
+              type="text"
+              value={newClassName}
+              onChange={(e) => setNewClassName(e.target.value)}
+              placeholder="أدخل اسم الصف"
+              className="w-full rounded-lg border border-gray-300 p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-[#0F5BFF]"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
+              >
+                إلغاء
+              </button>
+              <button
+                onClick={handleAddClass}
+                className="px-4 py-2 rounded-lg bg-[#0F5BFF] text-white hover:bg-[#0c4be0]"
+              >
+                حفظ الصف
+              </button>
+            </div>
+          </div>
+        </div>
+      )} */}
     </main>
   );
 }

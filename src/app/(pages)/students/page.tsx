@@ -5,12 +5,9 @@ import {
   Plus,
   Trash2,
   Pencil,
-  CheckCircle,
-  XCircle,
-  GraduationCap,
   Eye,
 } from "lucide-react";
-import useGet from "@/app/hooks/useGet";
+
 import { Student, StudentsResponse } from "@/app/types/types";
 import useGetOffer from "@/app/hooks/useGetOffer";
 import Link from "next/link";
@@ -29,17 +26,8 @@ export default function StudentsTable() {
     student.full_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  console.log("Students data:", students);
 
-  const handleToggleStatus = (id: number, status: "حاضر" | "غائب") => {
-    // هنا تكتب منطق تعديل الحالة
-    alert(`تغيير حالة الطالب ${id} إلى ${status} (غير مفعّل حالياً)`);
-  };
 
-  const handleDelete = (id: number) => {
-    // هنا تكتب منطق حذف الطالب
-    alert(`حذف الطالب ${id} (غير مفعّل حالياً)`);
-  };
 
   return (
     <main className="min-h-screen p-8 bg-gradient-to-br from-[#f4f6fb] to-[#dbe3f7] font-sans text-[#0F1A35] rtl">
@@ -106,30 +94,16 @@ export default function StudentsTable() {
                   </span>
                 </td>
                 <td className="p-4 text-sm space-x-6 space-x-reverse  flex justify-center items-center gap-4">
-                  {/* <button
-                    onClick={() => handleToggleStatus(student.id, "حاضر")}
-                    title="تسجيل حضور"
-                    className="text-green-600 hover:text-green-900 transition"
-                    aria-label="تسجيل حضور"
-                  >
-                    <CheckCircle size={22} />
-                  </button>
-                  <button
-                    onClick={() => handleToggleStatus(student.id, "غائب")}
-                    title="تسجيل غياب"
-                    className="text-yellow-500 hover:text-yellow-800 transition"
-                    aria-label="تسجيل غياب"
-                  >
-                    <XCircle size={22} />
-                  </button> */}
-                  <button
-                    onClick={() => alert("تعديل الطالب غير مفعّل حالياً")}
+                 
+                    <Link
+                            href={`/students/update/${student.id}`}
+
                     title="تعديل"
                     className="text-blue-700 hover:text-blue-900 transition"
                     aria-label="تعديل بيانات الطالب"
                   >
                     <Pencil size={22} />
-                  </button>
+              </Link>
 
                   <Link
                     href={`/students/show/${student.id}`}

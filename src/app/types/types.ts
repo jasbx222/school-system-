@@ -38,3 +38,49 @@ export interface StudentsResponse {
   students: Student[];
   total : number
 }
+type Profile = {
+  id: number;
+  name: string;
+  email: string;
+  expires_at: string; // ISO date string
+  email_verified_at: string | null;
+  school_id: number;
+  created_at: string; // ISO date string
+  updated_at: string; // ISO date string
+};
+
+export type ProfileResponse = {
+  profile: Profile;
+};
+
+
+ type OfferItem = {
+  id:number
+  note: string;
+  value: number;
+  student: string;
+};
+
+export interface OffersResponseItems {
+  data: OfferItem[];
+}
+type Invoice = {
+  id: number;
+  number: string;
+  value: string;
+  student_id: number;
+  student_name: string;
+  school_id: number;
+  school_name: string;
+  created_at: string;
+};
+
+export type InvoiceResponse = {
+  data: Invoice[];
+};
+
+export type Option = {
+  id: number;
+  full_name?: string;
+  name?: string;
+};

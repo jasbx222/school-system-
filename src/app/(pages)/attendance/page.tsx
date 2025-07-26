@@ -59,7 +59,7 @@ const AttendanceManagement = () => {
         },
         body: JSON.stringify({
           student_id: selectedStudentId,
-          status: attendanceStatus === "present" ? "حاضر" : "غائب",
+          status: attendanceStatus === "present" ? "مجاز" : "غائب",
         }),
       });
 
@@ -126,7 +126,7 @@ const AttendanceManagement = () => {
                 onChange={() => setAttendanceStatus("present")}
                 className="mr-2"
               />
-              حاضر
+              مجاز
             </label>
             <label className="cursor-pointer">
               <input
@@ -143,9 +143,11 @@ const AttendanceManagement = () => {
 
           <button
             onClick={handleSubmitAttendance}
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white  px-6 py-2 rounded hover:bg-blue-700 transition"
           >
-            تسجيل
+           {
+            loading ? "جاري التسجيل" :" تسجيل"
+           }
           </button>
 
           {message && <p className="mt-4 text-red-600">{message}</p>}

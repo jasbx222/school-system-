@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { Student } from "@/app/types/types";
 
 interface AttendanceRecord {
-  hadir: number;
+  mojaz: number;
   ghaib: number;
 }
 
@@ -53,7 +53,7 @@ export default function Page() {
     }
     setSending(true);
 
-    const message = `ملخص حضور الطالب ${data?.student.full_name}:\n- الحضور: ${attendanceRecords?.hadir} \n- الغياب: ${attendanceRecords?.ghaib} \n\nمع تحيات إدارة المدرسة.`;
+    const message = `ملخص حضور الطالب ${data?.student.full_name}:\n- الاجازات: ${attendanceRecords?.mojaz} \n- الغياب: ${attendanceRecords?.ghaib} \n\nمع تحيات إدارة المدرسة.`;
     const url = `https://wa.me/${digitsOnly}?text=${encodeURIComponent(message)}`;
 
     window.open(url, "_blank");
@@ -73,8 +73,8 @@ export default function Page() {
 
         <div className="flex justify-around mb-8">
           <div className="bg-green-100 p-6 rounded-lg w-40 text-center shadow-inner">
-            <p className="text-green-700 font-bold text-xl">حضور</p>
-            <p className="text-4xl font-extrabold">{attendanceRecords?.hadir}</p>
+            <p className="text-green-700 font-bold text-xl">الاجازات</p>
+            <p className="text-4xl font-extrabold">{attendanceRecords?.mojaz}</p>
           </div>
           <div className="bg-red-100 p-6 rounded-lg w-40 text-center shadow-inner">
             <p className="text-red-700 font-bold text-xl">غياب</p>

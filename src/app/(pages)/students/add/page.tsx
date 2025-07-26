@@ -1,30 +1,19 @@
 "use client";
 
-import useGet from "@/app/hooks/useGet";
 import useGetOffer from "@/app/hooks/useGetOffer";
 import usePost from "@/app/hooks/usePost";
 import { useState } from "react";
 
- 
 type Section = {
-  ClassSection: {
-    id: number;
-    title: string;
-  }[];
+  sections: { id: number; title: string }[];
   total: number;
 };
 type ClassRoom = {
-  ClassRoom: {
-    id: number;
-    title: string;
-  }[];
+  classes: { id: number; title: string }[];
   total: number;
 };
 type Semester = {
-  Semester: {
-    id: number;
-    title: string;
-  }[];
+  semesters: { id: number; title: string }[];
   total: number;
 };
 
@@ -48,6 +37,7 @@ export default function StudentForm() {
     profile_image: null as File | null,
   });
 
+  const [message, setMessage] = useState("");
   const { add } = usePost();
 
   const handleChange = (
@@ -59,38 +49,46 @@ export default function StudentForm() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
-    if (files && files[0]) {
+    if (files?.[0]) {
       setFormData((prev) => ({ ...prev, [name]: files[0] }));
     }
   };
-  const { data:sections, loading } = useGetOffer<Section>(
-     `${process.env.NEXT_PUBLIC_BASE_URL}sections`
-   );
-  const { data:classes } = useGetOffer<ClassRoom>(
-     `${process.env.NEXT_PUBLIC_BASE_URL}classes`
-   );
-  const { data:semesters } = useGetOffer<Semester>(
-     `${process.env.NEXT_PUBLIC_BASE_URL}semesters`
-   );
+
+  const { data: sections } = useGetOffer<Section>(`${process.env.NEXT_PUBLIC_BASE_URL}sections`);
+  const { data: classes } = useGetOffer<ClassRoom>(`${process.env.NEXT_PUBLIC_BASE_URL}classes`);
+  const { data: semesters } = useGetOffer<Semester>(`${process.env.NEXT_PUBLIC_BASE_URL}semesters`);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value !== null) {
+    for (const [key, value] of Object.entries(formData)) {
+      if (value !== null && value !== "") {
         data.append(key, value);
       }
-    });
+    }
 
-    // إرسال البيانات لل API (تعديل الرابط حسب حاجتك)
     add(`${process.env.NEXT_PUBLIC_BASE_URL}add/students`, data, true);
+   
+    
   };
 
   return (
+    
+  
     <form
       onSubmit={handleSubmit}
       className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg space-y-6 rtl text-[#0F1A35] font-sans"
     >
+          {message && (
+        <div
+          className={`text-center py-2 font-semibold ${
+            message.includes("✅") ? "text-green-600" : "text-red-500"
+          }`}
+        >
+          {message}
+        </div>
+      )}
       <h2 className="text-3xl font-bold text-center mb-6 text-[#0F5BFF]">
         إضافة طالب جديد
       </h2>
@@ -159,7 +157,7 @@ export default function StudentForm() {
     className="input-style"
   >
     <option value="">اختر الصف</option>
-    {classes?.ClassRoom?.map((class_id) => (
+    {classes?.classes?.map((class_id) => (
       <option key={class_id.id} value={class_id.id}>
         {class_id.title}
       </option>
@@ -180,7 +178,7 @@ export default function StudentForm() {
     className="input-style"
   >
     <option value="">اختر الشعبة</option>
-    {sections?.ClassSection?.map((section) => (
+    {sections?.sections?.map((section) => (
       <option key={section.id} value={section.id}>
         {section.title}
       </option>
@@ -301,7 +299,7 @@ export default function StudentForm() {
     className="input-style"
   >
     <option value="">اختر الفصل الدراسي</option>
-    {semesters?.Semester?.map((semester) => (
+    {semesters?.semesters?.map((semester) => (
       <option key={semester.id} value={semester.id}>
         {semester.title}
       </option>
@@ -364,4 +362,3 @@ export default function StudentForm() {
     </form>
   );
 }
-

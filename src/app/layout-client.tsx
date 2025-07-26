@@ -1,22 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Geist, Geist_Mono } from "next/font/google";
+import { useRouter, usePathname } from "next/navigation";
 import SideBar from "./(components)/sidebar/SideBar";
 import "./globals.css";
 import { getDecryptedToken } from "./hooks/useDelete";
-import LoginPage from "./(auth)/login/page";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export default function LayoutClient({
   children,
@@ -24,27 +12,42 @@ export default function LayoutClient({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [isVerified, setIsVerified] = useState(false);
+  const pathname = usePathname();
+  const [isVerified, setIsVerified] = useState<boolean | null>(null);
 
   useEffect(() => {
+    // لا تتحقق من التوكن داخل صفحة تسجيل الدخول
+    if (pathname === "/login") {
+      setIsVerified(true);
+      return;
+    }
+
     const token = getDecryptedToken();
     if (!token) {
-      router.push("/login");
+      router.replace("/login");
+      setIsVerified(false);
     } else {
       setIsVerified(true);
     }
-  }, []);
+  }, [pathname]);
 
-  if (!isVerified) {
-    return null; 
+  if (isVerified === null) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <p className="text-gray-500">جاري التحقق  ...</p>
+      </div>
+    );
   }
 
+  if (!isVerified) return null;
+
+
+  const isLoginPage = pathname === "/login";
+
   return (
-
-      <div className="flex h-screen">
-        <SideBar />
-        <main className="flex-1 overflow-y-auto p-4 bg-gray-50">{children}</main>
-      </div>
-
+    <div className="flex h-screen">
+      {!isLoginPage && <SideBar />}
+      <main className="flex-1 overflow-y-auto p-4 bg-gray-50">{children}</main>
+    </div>
   );
 }

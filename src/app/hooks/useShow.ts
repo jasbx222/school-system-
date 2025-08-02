@@ -2,7 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { getDecryptedToken } from "./useDelete";
 
-export default function useShow<T>(url: string, id: any ) {
+export default function useShow<T>(url: string, id: number ) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
 

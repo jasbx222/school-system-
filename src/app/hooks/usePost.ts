@@ -1,15 +1,14 @@
-
 import axios from "axios";
 import { useState } from "react";
 import { getDecryptedToken } from "./useDelete";
 
-export default function usePost() {
-  const [response, setResponse] = useState<any>(null);
+export default function usePost<T = any>() {
+  const [response, setResponse] = useState<string | null>(null); // حددت النوع هنا
   const [loading, setLoading] = useState(false);
 
-  const add = async (url: string, data: any, isFormData = false) => {
+  const add = async (url: string, data: T, isFormData = false) => {
     try {
-      const token = getDecryptedToken()
+      const token = getDecryptedToken();
 
       setLoading(true);
 
@@ -23,16 +22,16 @@ export default function usePost() {
       const body = isFormData ? data : JSON.stringify(data);
 
       const res = await axios.post(url, body, { headers });
-      if(res.status===400){
-          setResponse(" لا يمكن الارسال ربما العنصر مغلق   ");
+
+      if (res.status === 400) {
+        setResponse(" لا يمكن الارسال ربما العنصر مغلق   ");
+      } else {
+        setResponse(" تمت الإضافة بنجاح");
       }
-     setResponse(" تمت الإضافة بنجاح");
-   
-       
-   
-    } catch (error: any) {
-      console.error(" فشل الإرسال:", error);
-      setResponse("  حدث خطأ أثناء الإرسال");
+
+    } catch (error: unknown) {
+      console.error("فشل الإرسال:", error);
+      setResponse("حدث خطأ أثناء الإرسال");
     } finally {
       setLoading(false);
     }

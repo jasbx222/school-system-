@@ -2,30 +2,34 @@ import axios from "axios";
 import { useState } from "react";
 import { getDecryptedToken } from "./useDelete";
 
-export default function useUpdateMultipart() {
+export default function useUpdateMultipart<T = unknown>() {
   const [response, setResponse] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const update = async (url: string, data: any, isFormData = false) => {
+  const update = async (url: string, data: T, isFormData = false) => {
     try {
-      const token = getDecryptedToken()
-  if(!token)return null;
+      const token = getDecryptedToken();
+      if (!token) return null;
+
       setLoading(true);
 
       const headers = {
         ...(isFormData
           ? { "Content-Type": "multipart/form-data" }
           : { "Content-Type": "application/json" }),
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        Authorization: `Bearer ${token}`,
       };
 
       const body = isFormData ? data : JSON.stringify(data);
 
       const res = await axios.post(url, body, { headers });
-      if (res.status >= 200 && res.status <= 300) {
-        setResponse("تم اضافة الباقة بنجاح ");
+
+      if (res.status >= 200 && res.status < 300) {
+        setResponse("تمت العملية بنجاح");
+      } else {
+        setResponse("فشلت العملية");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("فشل الإرسال:", error);
       setResponse("حدث خطأ أثناء الإرسال");
     } finally {

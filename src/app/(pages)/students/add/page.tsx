@@ -2,6 +2,7 @@
 
 import useGetOffer from "@/app/hooks/useGetOffer";
 import usePost from "@/app/hooks/usePost";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 type Section = {
@@ -34,9 +35,9 @@ export default function StudentForm() {
     offer_id: "",
     description: "",
     file: null as File | null,
-    profile_image: null as File | null,
+    profile_image_url: null as File | null,
   });
-
+const route=useRouter()
   const [message, setMessage] = useState("");
   const { add } = usePost();
 
@@ -69,8 +70,9 @@ export default function StudentForm() {
     }
 
     add(`${process.env.NEXT_PUBLIC_BASE_URL}add/students`, data, true);
-   
-    
+    setMessage("✅ تم إضافة الطالب بنجاح!");
+   route.push("/students");
+     
   };
 
   return (
@@ -111,20 +113,23 @@ export default function StudentForm() {
           />
         </div>
 
-        <div>
-          <label htmlFor="profile_image" className="block mb-2 font-semibold">
-            صورة البروفايل
-          </label>
-          <input
-            id="profile_image"
-            type="file"
-            name="profile_image"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="input-style"
-          />
-        </div>
-      </div>
+       
+    <div className="flex flex-col items-center">
+      
+
+      <label htmlFor="profile_image_url" className="block mb-2 font-semibold text-lg">
+        صورة البروفايل
+      </label>
+      <input
+        id="profile_image_url"
+        type="file"
+        name="profile_image_url"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#0F5BFF] file:text-white hover:file:bg-[#0D4FCC] cursor-pointer"
+      />
+    </div>
+  </div>
 
       {/* بيانات الطالب الأساسية */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -349,7 +354,7 @@ export default function StudentForm() {
           name="file"
           accept=".pdf,.doc,.docx"
           onChange={handleFileChange}
-          className="input-style"
+          className="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#0F5BFF] file:text-white hover:file:bg-[#0D4FCC] cursor-pointer"
         />
       </div>
 

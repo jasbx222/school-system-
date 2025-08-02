@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { GraduationCap, Coins, Percent } from "lucide-react";
-import { OfferResponse, Student, StudentsResponse } from "@/app/types/types";
+import { InsResponse, OfferResponse, Student, StudentsResponse } from "@/app/types/types";
 import useGetOffer from "@/app/hooks/useGetOffer";
 
 function getMonthName(monthNumber: number) {
@@ -23,6 +23,7 @@ function getMonthName(monthNumber: number) {
 export default function Page() {
   const { data: offers } = useGetOffer<OfferResponse>(`${process.env.NEXT_PUBLIC_BASE_URL}sum/offer`);
   const { data: students } = useGetOffer<StudentsResponse>(`${process.env.NEXT_PUBLIC_BASE_URL}students`);
+  const { data: ins } = useGetOffer<InsResponse>(`${process.env.NEXT_PUBLIC_BASE_URL}sum/installments/`);
 
   const monthCounts: Record<string, number> = {};
 
@@ -51,7 +52,7 @@ export default function Page() {
     {
       icon: <Coins size={36} className="text-[#41BC4C]" />,
       title: "الأقساط المدفوعة",
-      value: "120,000 د.ع",
+     value: `المجموع الكلي: ${ins?.total ?? 0} د.ع`,
       border: "border-[#41BC4C]",
     },
     {

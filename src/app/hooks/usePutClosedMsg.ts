@@ -3,7 +3,7 @@ import axios from "axios";
 import { useCallback, useState } from "react";
 import { getDecryptedToken } from "./useDelete";
 
-const usePutClosedMsg = () => {
+const usePutStatus = () => {
   const [response, setResponse] = useState("");
   const [loading, setLoad] = useState<boolean>(false);
 
@@ -40,4 +40,4 @@ const usePutClosedMsg = () => {
   return { update, response, loading };
 };
 
-export default usePutClosedMsg;
+export default usePutStatus;

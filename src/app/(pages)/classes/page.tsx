@@ -16,28 +16,17 @@ interface ClassData {
 }
 
 export default function Page() {
-  const { data: classes, loading,refetch } = useGetOffer<ClassData>(
-    `${process.env.NEXT_PUBLIC_BASE_URL}classes`
-  );
-  // const {add}=usePost();
-
-  // const [showModal, setShowModal] = useState(false);
-  // const [newClassName, setNewClassName] = useState("");
-
-  // const handleAddClass =async (e:FormEvent) => {
-  //   e.preventDefault();
-  //   const data={
-  //     title:newClassName
-  //   }
-  //  await add( `${process.env.NEXT_PUBLIC_BASE_URL}classes`,data);
-  //  refetch()
-  //   setShowModal(false);
-  //   setNewClassName("");
-  // };
+  const {
+    data: classes,
+    loading,
+    refetch,
+  } = useGetOffer<ClassData>(`${process.env.NEXT_PUBLIC_BASE_URL}classes`);
 
   if (loading)
     return (
-      <div className="text-center py-10 text-gray-600">جاري تحميل البيانات...</div>
+      <div className="text-center py-10 text-gray-600">
+        جاري تحميل البيانات...
+      </div>
     );
 
   return (
@@ -46,7 +35,6 @@ export default function Page() {
         {/* العنوان وزر الإضافة */}
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-[#0F1A35]">إدارة الصفوف</h1>
-        
         </div>
 
         {/* بطاقات الصفوف */}

@@ -1,19 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Plus,
-  Trash2,
-  Pencil,
-  Eye,
-} from "lucide-react";
-
+import { Plus, Pencil, Eye } from "lucide-react";
 import { Student, StudentsResponse } from "@/app/types/types";
 import useGetOffer from "@/app/hooks/useGetOffer";
 import Link from "next/link";
-
+import Pagination from "@/app/(components)/(ui)/Pagination";
+import Select from "react-select"; // أضف هذا في الأعلى
 export default function StudentsTable() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // عدد العناصر في كل صفحة
 
   const { data: studentsResponse, loading } = useGetOffer<StudentsResponse>(
     `${process.env.NEXT_PUBLIC_BASE_URL}students`
@@ -22,27 +19,54 @@ export default function StudentsTable() {
   if (loading) return <p>جاري التحميل...</p>;
 
   const students = studentsResponse?.students ?? [];
-  const filterstudents = (studentsResponse?.students ?? []).filter((student) =>
+
+  const filteredStudents = students.filter((student) =>
     student.full_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // داخل الـ component:
+  const studentOptions = students.map((student) => ({
+    value: student.id,
+    label: student.full_name,
+  }));
 
+  const handleSelectChange = (selected: any) => {
+    setSearchTerm(selected?.label || "");
+    setCurrentPage(1);
+  };
 
+  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentStudents = filteredStudents.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <main className="min-h-screen p-8 bg-gradient-to-br from-[#f4f6fb] to-[#dbe3f7] font-sans text-[#0F1A35] rtl">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-6">
-        <input
-          type="text"
-          placeholder="ابحث عن طالب..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0F5BFF] w-full sm:w-64"
-        />
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-6">
+          <div className="w-full sm:w-64">
+            <Select
+              options={studentOptions}
+              isClearable
+              placeholder="اختر طالبًا..."
+              onChange={handleSelectChange}
+            />
+          </div>
+
+        
+        </div>
 
         <h1 className="text-3xl font-extrabold flex items-center gap-3">
           إدارة الطلاب
         </h1>
+
         <Link
           href={"/students/add"}
           className="bg-[#0F1A35] hover:bg-[#141f4d] text-white px-6 py-3 rounded-lg font-semibold shadow-md flex items-center gap-2 transition"
@@ -68,19 +92,14 @@ export default function StudentsTable() {
             </tr>
           </thead>
           <tbody>
-            {filterstudents?.map((student, idx) => (
+            {currentStudents.map((student, idx) => (
               <tr
                 key={student.id}
                 className="border-t border-gray-200 hover:bg-[#e1e6f7] transition cursor-pointer"
-                tabIndex={0}
-                aria-label={`الطالب ${student.full_name}، الحالة: ${student.gender}`}
               >
-                <td className="p-4 text-sm">{idx + 1}</td>
+                <td className="p-4 text-sm">{indexOfFirstItem + idx + 1}</td>
                 <td className="p-4 font-medium">{student.full_name}</td>
-                <td className="p-4 text-sm">
-                  {/* حقل الصف غير موجود مباشرة، ممكن تحط رقم القسم أو فصل */}
-                  {student.class_room_id ?? "-"}
-                </td>
+                <td className="p-4 text-sm">{student.class_room_id ?? "-"}</td>
                 <td className="p-4 text-sm">
                   <span
                     className={`inline-block px-3 py-1 rounded-full font-semibold tracking-wide select-none ${
@@ -88,35 +107,29 @@ export default function StudentsTable() {
                         ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"
                     }`}
-                    aria-label={`حالة الطالب: ${student.status}`}
                   >
                     {student.status}
                   </span>
                 </td>
-                <td className="p-4 text-sm space-x-6 space-x-reverse  flex justify-center items-center gap-4">
-                 
-                    <Link
-                            href={`/students/update/${student.id}`}
-
+                <td className="p-4 text-sm flex justify-center gap-4">
+                  <Link
+                    href={`/students/update/${student.id}`}
                     title="تعديل"
                     className="text-blue-700 hover:text-blue-900 transition"
-                    aria-label="تعديل بيانات الطالب"
                   >
                     <Pencil size={22} />
-              </Link>
-
+                  </Link>
                   <Link
                     href={`/students/show/${student.id}`}
                     title="تفاصيل"
                     className="text-green-700 hover:text-green-900 transition"
-                    aria-label="تفاصيل الطالب"
                   >
                     <Eye size={22} />
                   </Link>
                 </td>
               </tr>
             ))}
-            {students?.length === 0 && (
+            {currentStudents.length === 0 && (
               <tr>
                 <td colSpan={5} className="text-center p-4 text-gray-500">
                   لا توجد بيانات للعرض
@@ -126,6 +139,13 @@ export default function StudentsTable() {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Controls */}
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </main>
   );
 }

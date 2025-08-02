@@ -11,19 +11,28 @@ import {
 import usePost from "@/app/hooks/usePost";
 import useDelete from "@/app/hooks/useDelete";
 import Link from "next/link";
+import Select from "react-select";
 
 export default function DiscountsPage() {
   const [showModal, setShowModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedId,setSelectedId ] = useState<number | null>(null);
   // بيانات الفورم
-  const [selectedStudent, setSelectedStudent] = useState("");
+  // const [selectedStudent, setSelectedStudent] = useState("");
   const [amount, setAmount] = useState("");
   const [reason, setReason] = useState("");
-
+  const [studentId, setStudentId] = useState<string|null>('');
   const { data: student } = useGetOffer<StudentsResponse>(
     `${process.env.NEXT_PUBLIC_BASE_URL}students`
   );
+  const studentOptions = student?.students.map((student) => ({
+    value: student.id,
+    label: student.full_name,
+  }));
+
+  const handleSelectChange = (selectedOption: any) => {
+    setStudentId(selectedOption ? selectedOption.value : null);
+  };
   const {
     data: discounts,
     loading,
@@ -37,7 +46,7 @@ export default function DiscountsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const body = {
-      student_id: selectedStudent,
+      student_id: studentId,
       value: amount,
       note: reason,
     };
@@ -50,7 +59,7 @@ export default function DiscountsPage() {
   const handleDelete = async (id: number) => {
     await remove(`${process.env.NEXT_PUBLIC_BASE_URL}offers/${id}`);
     refetch();
-    setIsModalOpen(false)
+    setIsModalOpen(false);
   };
 
   return (
@@ -95,7 +104,8 @@ export default function DiscountsPage() {
                 </td>
                 <td className="p-4 text-gray-700">{d.note || "—"}</td>
                 <td className="p-4 flex items-center justify-center gap-2">
-                  <Link href={`/discounts/update/${d.id}`}
+                  <Link
+                    href={`/discounts/update/${d.id}`}
                     className="text-xs bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-full transition"
                     title="تعديل"
                   >
@@ -157,22 +167,14 @@ export default function DiscountsPage() {
 
             <h2 className="text-xl font-bold mb-6">إضافة خصم</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block mb-1 font-semibold">الطالب</label>
-                <select
-                  value={selectedStudent}
-                  onChange={(e) => setSelectedStudent(e.target.value)}
-                  className="w-full border p-2 rounded"
-                >
-                  <option value="">-- اختر الطالب --</option>
-                  {student?.students.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.full_name}
-                    </option>
-                  ))}
-                </select>
+              <div className="w-full">
+                <Select
+                  options={studentOptions}
+                  isClearable
+                  placeholder="اختر طالبًا..."
+                  onChange={handleSelectChange}
+                />
               </div>
-
               <div>
                 <label className="block mb-1 font-semibold">قيمة الخصم</label>
                 <input

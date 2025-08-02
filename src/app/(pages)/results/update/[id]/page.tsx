@@ -2,50 +2,58 @@
 
 import useGetOffer from "@/app/hooks/useGetOffer";
 import usePost from "@/app/hooks/usePost";
+import useShow from "@/app/hooks/useShow";
+import useUpdate from "@/app/hooks/useUpdate";
 import { StudentsResponse } from "@/app/types/types";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
+interface Subject {
+  name: string;
+  degree: number;
+}
 interface Data {
   id: number;
-  title: string;
-  class: string;
+  student: string;
+  student_id:number;
+  type_exam: string;
+  subjects: Subject[];
 }
-interface Subject {
-  data: Data[];
+interface Result {
+  data: Data;
 }
-
-const AddResultForm = () => {
+const Page = () => {
   const [studentId, setStudentId] = useState<string | null>(null);
-  const [subjects, setSubjects] = useState([{ title: "", degree: "" }]);
+  const [subjects, setSubjects] = useState([{ name: "", degree: "" }]);
   const [success, setSuccess] = useState(false);
   const [examType, setExamType] = useState<string | null>(null);
-
+  const { id } = useParams();
   const type_exam_data = [
     { value: "year", label: "امتحان سنوي" },
     { value: "month", label: "امتحان شهري" },
     { value: "day", label: "امتحان يومي" },
   ];
-
+  const { data: result } = useShow<Result>(
+    `${process.env.NEXT_PUBLIC_BASE_URL}results`,
+    id
+  );
   const [loading, setLoading] = useState(false);
 
   const { data: studentsResponse } = useGetOffer<StudentsResponse>(
     `${process.env.NEXT_PUBLIC_BASE_URL}students`
   );
-  const { data: subjectsResponse } = useGetOffer<Subject>(
-    `${process.env.NEXT_PUBLIC_BASE_URL}subjects`
-  );
 
-  const { add } = usePost();
+  const { update } = useUpdate();
 
   const handleAddSubject = () => {
-    setSubjects([...subjects, { title: "", degree: "" }]);
+    setSubjects([...subjects, { name: "", degree: "" }]);
   };
 
   const handleChangeSubject = (index: number, field: string, value: string) => {
     const updatedSubjects = [...subjects];
-    updatedSubjects[index][field as "title" | "degree"] = value;
+    updatedSubjects[index][field as "name" | "degree"] = value;
     setSubjects(updatedSubjects);
   };
 
@@ -62,15 +70,15 @@ const AddResultForm = () => {
       student_id: studentId,
       type_exam: examType,
       subjects: subjects.map((s) => ({
-        title: s.title,
+        name: s.name,
         degree: Number(s.degree),
       })),
     };
 
     try {
-      await add(`${process.env.NEXT_PUBLIC_BASE_URL}results`, data);
+      await update(`${process.env.NEXT_PUBLIC_BASE_URL}results/${id}`, data);
       setSuccess(true);
-      setSubjects([{ title: "", degree: "" }]);
+      setSubjects([{ name: "", degree: "" }]);
       setStudentId(null);
     } catch (error) {
       console.error("حدث خطأ أثناء الإرسال:", error);
@@ -83,11 +91,16 @@ const AddResultForm = () => {
     value: student.id,
     label: student.full_name,
   }));
-  const subjectOptions = subjectsResponse?.data.map((s) => ({
-    value: s.id,
-    label: s.title,
-  }));
-
+useEffect(() => {
+  if (result?.data) {
+    setStudentId(result.data.student_id.toString());
+    setExamType(result.data.type_exam);
+    setSubjects(result.data.subjects.map((subject) => ({
+      name: subject.name,
+      degree: subject.degree.toString(),
+    })));
+  }
+}, [result]);
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50">
       <h1 className="text-3xl font-bold text-blue-800 mb-6 text-center">
@@ -98,7 +111,7 @@ const AddResultForm = () => {
         onSubmit={handleSubmit}
         className="bg-white shadow-xl rounded-3xl p-6 max-w-2xl mx-auto space-y-6"
       >
-        <div className="flex flex-col sm:flex-row items-center mb-8 gap-6">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-6">
           <div className="w-full sm:w-64">
             <Select
               options={studentOptions}
@@ -112,7 +125,7 @@ const AddResultForm = () => {
             <Select
               options={type_exam_data}
               isClearable
-              placeholder=" اختر نوع الامتحان ..."
+              placeholder="اختر نوع الامتحان..."
               onChange={(selected: any) =>
                 setExamType(selected ? selected.value : null)
               }
@@ -126,20 +139,16 @@ const AddResultForm = () => {
           </label>
           {subjects.map((subject, index) => (
             <div key={index} className="flex items-center gap-2">
-              <div className="w-full sm:w-64">
-                <Select
-                  options={subjectOptions}
-                  isClearable
-                  placeholder="اختر المادة ..."
-                  onChange={(selected: any) =>
-                    handleChangeSubject(
-                      index,
-                      "title",
-                      selected ? selected.label : ""
-                    )
-                  }
-                />
-              </div>
+              <input
+                type="text"
+                placeholder="اسم المادة"
+                value={subject.name }
+                onChange={(e) =>
+                  handleChangeSubject(index, "name", e.target.value)
+                }
+                required
+                className="w-1/2 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-400"
+              />
               <input
                 type="number"
                 placeholder="الدرجة"
@@ -151,6 +160,9 @@ const AddResultForm = () => {
                 className="w-1/2 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-400"
               />
             </div>
+
+
+
           ))}
           <button
             type="button"
@@ -179,4 +191,4 @@ const AddResultForm = () => {
   );
 };
 
-export default AddResultForm;
+export default Page;

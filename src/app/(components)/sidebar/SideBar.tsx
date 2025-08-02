@@ -10,6 +10,7 @@ import {
   School,
   X,
   CircleCheck,
+  BadgePercent,
 } from "lucide-react";
 import logo from "../../../../public/logo.png";
 import Image from "next/image";
@@ -48,7 +49,7 @@ const SideBar = () => {
     { name: "إدارة التفقد", url: "/attendance", icon: CircleCheck },
     { name: "المصاريف", url: "/expenses", icon: PiggyBank },
     { name: "الصفوف", url: "/classes", icon: School },
-    { name: "الخصومات", url: "/discounts", icon: PencilRuler },
+    { name: "الخصومات", url: "/discounts", icon: BadgePercent },
   ];
 
   if (token === null) return null;
@@ -94,7 +95,7 @@ const SideBar = () => {
           <div className="w-46 h-16 rounded-xl bg-yellow-400 text-[#0F1A35] flex items-center justify-center text-xl font-bold border-4 border-yellow-300 shadow-lg animate-pulse">
             {profile?.profile?.name || "مدرسة"}
           </div>
-     
+
           <p className="text-sm text-red-600 bg-yellow-100 border border-red-500 rounded-md px-3 py-2 mt-4 w-fit shadow-sm">
             <span className="font-medium">انتهاء صلاحية الحساب:</span>{" "}
             {formatDate(profile?.profile?.expires_at)}

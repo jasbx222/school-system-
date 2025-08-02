@@ -6,12 +6,15 @@
 body {
   font-family: 'Cairo', sans-serif;
 }
-/* globals.css أو ملف CSS عام */
+
+
+
 .smooth-scroll {
   scroll-behavior: smooth;
 }
 
-/* لتحسين شكل السكروولبار في المتصفحات الحديثة */
+
+
 .scrollbar-thin {
   scrollbar-width: thin;
 }
@@ -31,6 +34,9 @@ body {
 .scrollbar-none {
   scrollbar-width: none;
 }
+
+/* Tailwind-like styles in CSS form (يمكن تحويلها لـ Tailwind utilities مباشرة) */
+
 .input-style {
-  @apply w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#0F5BFF] placeholder:text-gray-400;
+  @apply w-full border border-gray-300 rounded-md px-3 py-2 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F5BFF] focus:border-[#0F5BFF] transition;
 }

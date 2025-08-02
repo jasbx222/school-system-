@@ -57,8 +57,6 @@ export default function Page() {
     const url = `https://wa.me/${digitsOnly}?text=${encodeURIComponent(message)}`;
 
     window.open(url, "_blank");
-
-    // لا حاجة لـ setSending(false) هنا لأن النافذة الجديدة تفتح فوراً
     setSending(false);
   };
 

@@ -11,6 +11,9 @@ export type OfferResponse = {
   offers: Offer[];
   total: number;
 };
+export type InsResponse = {
+  total: number;
+};
 
 export interface Student {
   id: number;
@@ -42,11 +45,11 @@ type Profile = {
   id: number;
   name: string;
   email: string;
-  expires_at: string; // ISO date string
+  expires_at: string;
   email_verified_at: string | null;
   school_id: number;
-  created_at: string; // ISO date string
-  updated_at: string; // ISO date string
+  created_at: string; 
+  updated_at: string; 
 };
 
 export type ProfileResponse = {
@@ -83,4 +86,24 @@ export type Option = {
   id: number;
   full_name?: string;
   name?: string;
+};
+type Part = {
+  id: number;
+  amount: string;
+  due_date: string;
+  paid_at: string;
+};
+
+type Installment = {
+  id: number;
+  title: string;
+  amount: string;
+  student: string;
+  status: "pending" | "paid";
+  created_at: string;
+  parts: Part[];
+};
+
+export type Installments = {
+  data: Installment[];
 };

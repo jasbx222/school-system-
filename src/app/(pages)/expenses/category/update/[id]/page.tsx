@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import useUpdate from "@/app/hooks/useUpdate";
 import { useParams } from "next/navigation";
 export default function Page() {
@@ -9,7 +9,7 @@ export default function Page() {
   const [message, setMessage] = useState("");
   const { update } = useUpdate();
 const {id}=useParams();
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const form = {
       title: title,

@@ -11,6 +11,10 @@ type InstallmentPart = {
   amount: string;
   due_date: string;
 };
+type StudentOption = {
+  value: number;
+  label: string;
+};
 
 export default function AddInstallmentPage() {
   const router = useRouter();
@@ -35,9 +39,10 @@ export default function AddInstallmentPage() {
     label: student.full_name,
   }));
 
-  const handleSelectChange = (selectedOption: any) => {
-    setStudentId(selectedOption ? selectedOption.value : null);
-  };
+const handleSelectChange = (selectedOption: StudentOption | null) => {
+  setStudentId(selectedOption ? selectedOption.value.toString() : null);
+};
+
   const handlePartChange = (
     index: number,
     field: keyof InstallmentPart,
@@ -93,12 +98,13 @@ export default function AddInstallmentPage() {
       </div>
 
          <div className="w-full">
-                <Select
-                  options={studentOptions}
-                  isClearable
-                  placeholder="اختر طالبًا..."
-                  onChange={handleSelectChange}
-                />
+              <Select<StudentOption>
+  options={studentOptions}
+  isClearable
+  placeholder="اختر طالبًا..."
+  onChange={handleSelectChange}
+/>
+
               </div>
 
       <div className="space-y-1">

@@ -4,19 +4,29 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import Select from "react-select";
 
+type OptionType = {
+  value: string;
+  label: string;
+};
+
 const Button = () => {
   const route=useRouter();
-  const RouteSelected = (selected: any) => {
-    if (selected.value === "all") {
+ const RouteSelected = (selected: OptionType | null) => {
+  if (!selected) return;
+
+  switch (selected.value) {
+    case "all":
       route.push("/installments");
-    }
-    if (selected.value === "paid") {
+      break;
+    case "paid":
       route.push("/installments/status/paid");
-    }
-    if (selected.value === "pending") {
+      break;
+    case "pending":
       route.push("/installments/status/pending");
-    }
-  };
+      break;
+  }
+};
+
 
   return (
     <div className="grid md:grid-cols-4 gap-5 grid-cols-2 ">

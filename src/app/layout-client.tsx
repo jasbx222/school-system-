@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import SideBar from "./(components)/sidebar/SideBar";
 import "./globals.css";
 import { getDecryptedToken } from "./hooks/useDelete";
+import ButtonBack from "./(components)/(ui)/ButtonBack";
 
 export default function LayoutClient({
   children,
@@ -47,7 +48,9 @@ export default function LayoutClient({
   return (
     <div className="flex h-screen">
       {!isLoginPage && <SideBar />}
-      <main className="flex-1 overflow-y-auto p-4 bg-gray-50">{children}</main>
+      <ButtonBack/>
+
+      <main className="flex-1 overflow-y-auto p-4 bg-gray-50  ">{children}</main>
     </div>
   );
 }

@@ -1,12 +1,13 @@
 "use client";
 
 import useGet from "@/app/hooks/useGet";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import useUpdateMultipart from "@/app/hooks/useUpdateFaq";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Student } from "@/app/types/types";
 import useShow from "@/app/hooks/useShow";
+import { InputField, SelectField, SelectStaticField } from "../../Inputs";
 
 type Section = {
   sections: { id: number; title: string }[];
@@ -23,17 +24,17 @@ type Semester = {
 
 export default function StudentForm() {
   const { id } = useParams();
-  const { data: studentData, loading } = useGetOffer<{ student: Student }>(
+  const { data: studentData, loading } = useGetData<{ student: Student }>(
     `${process.env.NEXT_PUBLIC_BASE_URL}students/${id}`
   );
 
-  const { data: sections } = useGetOffer<Section>(
+  const { data: sections } = useGetData<Section>(
     `${process.env.NEXT_PUBLIC_BASE_URL}sections`
   );
-  const { data: classes } = useGetOffer<ClassRoom>(
+  const { data: classes } = useGetData<ClassRoom>(
     `${process.env.NEXT_PUBLIC_BASE_URL}classes`
   );
-  const { data: semesters } = useGetOffer<Semester>(
+  const { data: semesters } = useGetData<Semester>(
     `${process.env.NEXT_PUBLIC_BASE_URL}semesters`
   );
 
@@ -122,11 +123,7 @@ export default function StudentForm() {
   <h2 className="text-4xl font-extrabold text-center mb-6 text-[#0F5BFF]">
     تعديل معلومات الطالب
   </h2>
-<img
-        src={studentData?.student.profile_image_url || "/default-profile.png"}
-        alt="صورة الطالب"
-        className="w-40 h-40 rounded-full object-cover mb-4 border-4 border-[#0F5BFF] shadow-lg transition-transform duration-300 ease-in-out hover:scale-105"
-      />
+
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
     <div>
       <label htmlFor="full_name" className="block mb-3 font-semibold text-lg">
@@ -174,7 +171,9 @@ export default function StudentForm() {
       label="الصف"
       value={formData.class_room_id}
       onChange={handleChange}
-      options={classes?.classes}
+      options={classes?.classes??[
+        { id: 0, title: "لا يوجد صفوف" }
+      ]}
     />
 
     <SelectField
@@ -182,7 +181,11 @@ export default function StudentForm() {
       label="الشعبة"
       value={formData.class_section_id}
       onChange={handleChange}
-      options={sections?.sections}
+      options={sections?.sections??[
+        { id: 0, title: "لا يوجد شعب" }
+      ]
+        
+      }
     />
 
     <InputField
@@ -238,7 +241,9 @@ export default function StudentForm() {
       label="الفصل الدراسي"
       value={formData.semester_id}
       onChange={handleChange}
-      options={semesters?.semesters}
+      options={semesters?.semesters??[
+        { id: 0, title: "لا يوجد فصول دراسية" }
+      ]}
     />
 
     <InputField
@@ -289,69 +294,3 @@ export default function StudentForm() {
 
   );
 }
-
-// Components for reusability (Input, Select):
-const InputField = ({
-  id,
-  label,
-  type = "text",
-  value,
-  onChange,
-  required = false,
-}: any) => (
-  <div>
-    <label htmlFor={id} className="block mb-2 font-semibold">
-      {label} {required && <span className="text-red-600">*</span>}
-    </label>
-    <input
-      id={id}
-      name={id}
-      type={type}
-      value={value}
-      onChange={onChange}
-      required={required}
-      className="input-style"
-    />
-  </div>
-);
-
-const SelectField = ({
-  id,
-  label,
-  value,
-  onChange,
-  options = [],
-}: any) => (
-  <div>
-    <label htmlFor={id} className="block mb-2 font-semibold">
-      {label} <span className="text-red-600">*</span>
-    </label>
-    <select
-      id={id}
-      name={id}
-      value={value}
-      onChange={onChange}
-      required
-      className="input-style"
-    >
-      <option value="">اختر</option>
-      {options.map((opt: any) => (
-        <option key={opt.id} value={opt.id}>
-          {opt.title}
-        </option>
-      ))}
-    </select>
-  </div>
-);
-
-const SelectStaticField = ({
-  id,
-  label,
-  value,
-  onChange,
-  options = [],
-}: any) => (
-  <div>
-
-  </div>
-);

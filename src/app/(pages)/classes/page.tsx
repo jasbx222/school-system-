@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import { Building2, Plus } from "lucide-react";
 import usePost from "@/app/hooks/usePost";
 
@@ -20,7 +20,7 @@ export default function Page() {
     data: classes,
     loading,
     refetch,
-  } = useGetOffer<ClassData>(`${process.env.NEXT_PUBLIC_BASE_URL}classes`);
+  } = useGetData<ClassData>(`${process.env.NEXT_PUBLIC_BASE_URL}classes`);
 
   if (loading)
     return (

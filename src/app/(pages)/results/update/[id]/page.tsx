@@ -1,6 +1,6 @@
 "use client";
 
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import usePost from "@/app/hooks/usePost";
 import useShow from "@/app/hooks/useShow";
 import useUpdate from "@/app/hooks/useUpdate";
@@ -35,13 +35,13 @@ const Page = () => {
     { value: "month", label: "امتحان شهري" },
     { value: "day", label: "امتحان يومي" },
   ];
-  const { data: result } = useShow<Result>(
-    `${process.env.NEXT_PUBLIC_BASE_URL}results`,
-    id
+  const { data: result } = useGetData<Result>(
+    `${process.env.NEXT_PUBLIC_BASE_URL}results/${id}`,
+  
   );
   const [loading, setLoading] = useState(false);
 
-  const { data: studentsResponse } = useGetOffer<StudentsResponse>(
+  const { data: studentsResponse } = useGetData<StudentsResponse>(
     `${process.env.NEXT_PUBLIC_BASE_URL}students`
   );
 

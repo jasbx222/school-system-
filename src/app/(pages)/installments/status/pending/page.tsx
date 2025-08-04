@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import dayjs from "dayjs";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import {
   Plus,
   Download,
@@ -45,7 +45,7 @@ const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const { data: installments, refetch } = useGetOffer<ApiResponse>(
+  const { data: installments, refetch } = useGetData<ApiResponse>(
     `${process.env.NEXT_PUBLIC_BASE_URL}pending/installments`
   );
 

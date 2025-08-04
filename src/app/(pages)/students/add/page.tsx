@@ -1,6 +1,6 @@
 "use client";
 
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import usePost from "@/app/hooks/usePost";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -55,9 +55,9 @@ const route=useRouter()
     }
   };
 
-  const { data: sections } = useGetOffer<Section>(`${process.env.NEXT_PUBLIC_BASE_URL}sections`);
-  const { data: classes } = useGetOffer<ClassRoom>(`${process.env.NEXT_PUBLIC_BASE_URL}classes`);
-  const { data: semesters } = useGetOffer<Semester>(`${process.env.NEXT_PUBLIC_BASE_URL}semesters`);
+  const { data: sections } = useGetData<Section>(`${process.env.NEXT_PUBLIC_BASE_URL}sections`);
+  const { data: classes } = useGetData<ClassRoom>(`${process.env.NEXT_PUBLIC_BASE_URL}classes`);
+  const { data: semesters } = useGetData<Semester>(`${process.env.NEXT_PUBLIC_BASE_URL}semesters`);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

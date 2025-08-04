@@ -107,3 +107,65 @@ type Installment = {
 export type Installments = {
   data: Installment[];
 };
+
+interface Ex{
+   id: number;
+  title: string;
+  date: string;
+  description: string;
+  status: "دفع" | "قبض";
+  amount: number;
+}
+interface Expense {
+ expenses:Ex[]
+}
+type InstallmentPart = {
+  amount: string;
+  due_date: string;
+};
+export type StudentOption = {
+  value: number;
+  label: string;
+};
+export interface AddInsType  {
+  studentId:string | null;
+        title: string;
+        setTitle: (value: string) => void;
+        amount: string;
+        setAmount: (value: string) => void;
+        
+        studentOptions: StudentOption[] |null;
+        handleSelectChange: (selectedOption: any) => void;
+        status: string;
+        setStatus: (value: string) => void;
+        isSplit: boolean;
+        setIsSplit: (value: boolean) => void;
+        parts: { amount: string; due_date: string }[];
+        handleAddPart: () => void;
+        handlePartChange: (
+        index: number,
+        field: keyof { amount: string; due_date: string },
+        value: string
+        ) => void;
+        handleSubmit: () => Promise<void>;
+    }
+
+
+
+  export  type Inputs = {
+      full_name: string;
+      mother_name: string;
+      birth_day: string;
+      gender: string;
+      status: string;
+      orphan: string;
+      has_martyrs_relatives: string;
+      last_school: string;
+      semester_id: string;
+      offer_id: string;
+      description: string;
+      file: FileList;
+      profile_image_url: FileList;
+      class_room_id: string;
+      class_section_id: string;
+    };

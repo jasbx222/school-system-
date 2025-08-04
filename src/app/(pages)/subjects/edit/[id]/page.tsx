@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import Select from "react-select";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import { useParams, useRouter } from "next/navigation";
 import useUpdate from "@/app/hooks/useUpdate";
 
@@ -18,7 +18,7 @@ const Page = () => {
   const [title, setTitle] = useState("");
   const [subjectClass, setSubjectClass] = useState<number | "">("");
 
-  const { data: classesResponse } = useGetOffer<{
+  const { data: classesResponse } = useGetData<{
     classes: { id: number; title: string }[];
   }>(`${process.env.NEXT_PUBLIC_BASE_URL}classes`);
 

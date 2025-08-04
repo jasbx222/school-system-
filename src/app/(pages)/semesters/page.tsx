@@ -2,7 +2,7 @@
 
 import React, { FormEvent, useState } from "react";
 import { PlusCircle, School } from "lucide-react";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import usePost from "@/app/hooks/usePost";
 
 interface SemsterItem {
@@ -21,29 +21,8 @@ export default function Page() {
     data: classes,
     loading,
     refetch,
-  } = useGetOffer<Semester>(`${process.env.NEXT_PUBLIC_BASE_URL}semesters`);
-  // const { add } = usePost();
-  // const [showModal, setShowModal] = useState(false);
-  // const [title, setTitle] = useState("");
-  // const [fromDate, setFromDate] = useState("");
-  // const [toDate, setToDate] = useState("");
-
-  // const handleAddSemester = async (e: FormEvent) => {
-  //   e.preventDefault();
-  //   const data = {
-  //     title: title,
-  //     from: fromDate,
-  //     to: toDate,
-  //   };
-  //   await add(`${process.env.NEXT_PUBLIC_BASE_URL}semesters`, data);
-  //   refetch();
-
-  //   setShowModal(false);
-  //   setTitle("");
-  //   setFromDate("");
-  //   setToDate("");
-  // };
-
+  } = useGetData<Semester>(`${process.env.NEXT_PUBLIC_BASE_URL}semesters`);
+ 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#f5f8ff] to-[#e0e7ff] p-6 font-cairo">
       <div className="max-w-7xl mx-auto">

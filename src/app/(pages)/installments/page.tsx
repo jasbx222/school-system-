@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import dayjs from "dayjs";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import { Download, Trash2, CheckCircle } from "lucide-react";
 import domtoimage from "dom-to-image";
 import jsPDF from "jspdf";
@@ -16,11 +16,10 @@ import Button from "./Button";
 const Page = () => {
   const [isOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const { data: installments, refetch } = useGetOffer<Installments>(
+  const { data: installments, refetch } = useGetData<Installments>(
     `${process.env.NEXT_PUBLIC_BASE_URL}installments`
   );
 
@@ -29,9 +28,7 @@ const Page = () => {
 
   const handleDelete = async () => {
     if (selectedId === null) return;
-    await remove(
-      `${process.env.NEXT_PUBLIC_BASE_URL}installments/${selectedId}`
-    );
+    await remove(`${process.env.NEXT_PUBLIC_BASE_URL}installments/${selectedId}`);
     refetch();
     setIsModalOpen(false);
   };
@@ -65,25 +62,23 @@ const Page = () => {
   );
 
   return (
-    <div className="p-6 space-y-6 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-6 max-w-5xl mx-auto">
       <Button />
 
       {currentData.map((inst) => (
         <div
           key={inst.id}
           id={`installment-${inst.id}`}
-          className="border rounded-xl shadow-sm p-5 space-y-3 bg-white relative"
+          className="border rounded-xl shadow-sm p-5 space-y-4 bg-white relative"
         >
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
             <div>
               <h2 className="text-lg font-semibold text-gray-800">
                 {inst.title}
               </h2>
               <p className="text-sm text-gray-600 mt-1">
                 الطالب:{" "}
-                <span className="font-medium text-gray-700">
-                  {inst.student}
-                </span>{" "}
+                <span className="font-medium text-gray-700">{inst.student}</span>{" "}
                 | المبلغ: <span className="font-medium">{inst.amount}</span> |
                 الحالة:{" "}
                 <span
@@ -99,10 +94,10 @@ const Page = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+            <div className="flex flex-col sm:grid sm:grid-cols-3 gap-2 w-full sm:w-auto">
               <button
                 onClick={() => exportToPDF(inst.id)}
-                className="bg-gray-100 text-green-500 hover:bg-gray-200 px-3 py-1.5 rounded-md text-sm flex items-center gap-1"
+                className="bg-gray-100 text-green-500 hover:bg-gray-200 px-3 py-1.5 rounded-md text-sm flex items-center justify-center gap-1"
               >
                 <Download size={16} />
                 PDF
@@ -110,7 +105,7 @@ const Page = () => {
 
               <button
                 onClick={() => EditStatus(inst.id)}
-                className="bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-md text-sm flex items-center gap-1"
+                className="bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-md text-sm flex items-center justify-center gap-1"
               >
                 <CheckCircle
                   color={inst.status === "paid" ? "green" : "red"}
@@ -124,7 +119,7 @@ const Page = () => {
                   setSelectedId(inst.id);
                   setIsModalOpen(true);
                 }}
-                className="bg-gray-100 text-red-500 hover:bg-gray-200 px-3 py-1.5 rounded-md text-sm flex items-center gap-1"
+                className="bg-gray-100 text-red-500 hover:bg-gray-200 px-3 py-1.5 rounded-md text-sm flex items-center justify-center gap-1"
               >
                 <Trash2 size={16} />
                 حذف
@@ -140,12 +135,11 @@ const Page = () => {
             </div>
           </div>
 
-          {/* // parts of payments  */}
           {inst.parts.length > 0 && (
-            <div className="mt-3">
+            <div>
               <p className="font-medium mb-2 text-gray-700">تفاصيل الأجزاء:</p>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-right border border-gray-200 rounded-lg overflow-hidden">
+                <table className="w-full min-w-[500px] text-sm text-right border border-gray-200 rounded-lg overflow-hidden">
                   <thead className="bg-gray-50 text-gray-600">
                     <tr>
                       <th className="border px-3 py-2">#</th>
@@ -177,7 +171,6 @@ const Page = () => {
         </div>
       ))}
 
-      {/* Pagination Controls */}
       <Pagination
         totalPages={totalPages}
         currentPage={currentPage}

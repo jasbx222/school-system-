@@ -10,38 +10,46 @@ import {
 } from "recharts";
 import { GraduationCap, Coins, Percent } from "lucide-react";
 import { InsResponse, OfferResponse, Student, StudentsResponse } from "@/app/types/types";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
+import { useMemo } from "react";
 
-function getMonthName(monthNumber: number) {
-  const months = [
-    "كانون 2", "شباط", "آذار", "نيسان", "أيار", "حزيران",
-    "تموز", "آب", "أيلول", "تشرين 1", "تشرين 2", "كانون 1",
-  ];
-  return months[monthNumber] || "";
-}
+// أسماء الشهور
+const months = [
+  "كانون 2", "شباط", "آذار", "نيسان", "أيار", "حزيران",
+  "تموز", "آب", "أيلول", "تشرين 1", "تشرين 2", "كانون 1",
+];
+
+const getMonthName = (monthNumber: number) => months[monthNumber] || "";
 
 export default function Page() {
-  const { data: offers } = useGetOffer<OfferResponse>(`${process.env.NEXT_PUBLIC_BASE_URL}sum/offer`);
-  const { data: students } = useGetOffer<StudentsResponse>(`${process.env.NEXT_PUBLIC_BASE_URL}students`);
-  const { data: ins } = useGetOffer<InsResponse>(`${process.env.NEXT_PUBLIC_BASE_URL}sum/installments/`);
+  const { data: offers } = useGetData<OfferResponse>(
+    `${process.env.NEXT_PUBLIC_BASE_URL}sum/offer`
+  );
+  const { data: students } = useGetData<StudentsResponse>(
+    `${process.env.NEXT_PUBLIC_BASE_URL}students`
+  );
+  const { data: ins } = useGetData<InsResponse>(
+    `${process.env.NEXT_PUBLIC_BASE_URL}sum/installments/`
+  );
 
-  const monthCounts: Record<string, number> = {};
-
-  if (students?.students) {
-    students.students.forEach((student: Student) => {
+  // معالجة بيانات الرسم البياني بشكل ميمو
+  const chartData = useMemo(() => {
+    const monthCounts: Record<string, number> = {};
+    students?.students?.forEach((student: Student) => {
       if (student.birth_day) {
         const month = new Date(student.birth_day).getMonth();
-        const monthName = getMonthName(month);
-        monthCounts[monthName] = (monthCounts[monthName] || 0) + 1;
+        const name = getMonthName(month);
+        monthCounts[name] = (monthCounts[name] || 0) + 1;
       }
     });
-  }
 
-  const chartData = Object.entries(monthCounts).map(([name, طلاب]) => ({
-    name,
-    طلاب,
-  }));
+    return Object.entries(monthCounts).map(([name, طلاب]) => ({
+      name,
+      طلاب,
+    }));
+  }, [students]);
 
+  // الإحصائيات
   const stats = [
     {
       icon: <GraduationCap size={36} className="text-[#0F5BFF]" />,
@@ -52,7 +60,7 @@ export default function Page() {
     {
       icon: <Coins size={36} className="text-[#41BC4C]" />,
       title: "الأقساط المدفوعة",
-     value: `المجموع الكلي: ${ins?.total ?? 0} د.ع`,
+      value: `المجموع الكلي: ${ins?.total ?? 0} د.ع`,
       border: "border-[#41BC4C]",
     },
     {
@@ -76,12 +84,16 @@ export default function Page() {
             <div
               key={idx}
               className={`bg-white rounded-xl p-5 flex items-center gap-5 border-r-8 ${border}
-              shadow-md hover:shadow-xl hover:scale-105 transition-transform duration-300 cursor-pointer`}
+                shadow-md hover:shadow-xl hover:scale-105 transition-transform duration-300 cursor-pointer`}
               role="region"
               aria-label={title}
               tabIndex={0}
-              onFocus={(e) => e.currentTarget.classList.add("ring-4", "ring-[#0F5BFF]")}
-              onBlur={(e) => e.currentTarget.classList.remove("ring-4", "ring-[#0F5BFF]")}
+              onFocus={(e) =>
+                e.currentTarget.classList.add("ring-4", "ring-[#0F5BFF]")
+              }
+              onBlur={(e) =>
+                e.currentTarget.classList.remove("ring-4", "ring-[#0F5BFF]")
+              }
             >
               <div>{icon}</div>
               <div className="flex-1 text-right">
@@ -97,7 +109,7 @@ export default function Page() {
           <h2 className="text-xl sm:text-2xl font-bold text-[#0F5BFF] mb-6 text-right">
             إحصائية عدد الطلاب حسب الأشهر
           </h2>
-          <div className="w-full h-[300px] sm:-h[360px]">
+          <div className="w-full h-[300px] sm:h-[360px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={chartData}

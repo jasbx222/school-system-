@@ -1,21 +1,24 @@
 "use client";
 
 import React, { useState } from "react";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import { useParams } from "next/navigation";
 import { Student } from "@/app/types/types";
 
 interface AttendanceRecord {
   mojaz: number;
   ghaib: number;
+  resoneForGhaib: string;
+  resoneForMojaz: string;
+
 }
 
 export default function Page() {
   const { id } = useParams();
-  const { data: attendanceRecords, loading } = useGetOffer<AttendanceRecord>(
+  const { data: attendanceRecords, loading } = useGetData<AttendanceRecord>(
     `${process.env.NEXT_PUBLIC_BASE_URL}attendanceRecords/${id}`
   );
-  const { data } = useGetOffer<{ student: Student }>(
+  const { data } = useGetData<{ student: Student }>(
     `${process.env.NEXT_PUBLIC_BASE_URL}students/${id}`
   );
 
@@ -62,41 +65,63 @@ export default function Page() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-8 flex flex-col items-center font-sans text-blue-900">
-      <h1 className="text-4xl font-extrabold mb-10 text-center">
-        ملخص الحضور والغياب للطالب
-      </h1>
+  <h1 className="text-4xl font-extrabold mb-10 text-center">
+    ملخص الحضور والغياب للطالب
+  </h1>
 
-      <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-xl">
-        <h2 className="text-2xl font-semibold mb-6 text-center">{data?.student.full_name}</h2>
+  <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-2xl space-y-8">
+    <h2 className="text-3xl font-bold text-center text-blue-700">
+      {data?.student.full_name}
+    </h2>
 
-        <div className="flex justify-around mb-8">
-          <div className="bg-green-100 p-6 rounded-lg w-40 text-center shadow-inner">
-            <p className="text-green-700 font-bold text-xl">الاجازات</p>
-            <p className="text-4xl font-extrabold">{attendanceRecords?.mojaz}</p>
-          </div>
-          <div className="bg-red-100 p-6 rounded-lg w-40 text-center shadow-inner">
-            <p className="text-red-700 font-bold text-xl">غياب</p>
-            <p className="text-4xl font-extrabold">{attendanceRecords?.ghaib}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <input
-            type="tel"
-            placeholder="أدخل رقم الهاتف للواتساب"
-            className="flex-grow p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-          />
-          <button
-            onClick={sendWhatsApp}
-            disabled={sending}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md px-6 py-3 transition disabled:opacity-60"
-          >
-            {sending ? "جار الإرسال..." : "إرسال عبر واتساب"}
-          </button>
-        </div>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div className="bg-green-100 p-6 rounded-xl shadow-md">
+        <p className="text-green-800 font-semibold text-lg">الإجازات</p>
+        <p className="text-4xl font-bold">{attendanceRecords?.mojaz}</p>
       </div>
-    </main>
+
+      <div className="bg-red-100 p-6 rounded-xl shadow-md">
+        <p className="text-red-800 font-semibold text-lg">الغياب</p>
+        <p className="text-4xl font-bold">{attendanceRecords?.ghaib}</p>
+      </div>
+
+      <div className="bg-yellow-100 p-6 rounded-xl shadow-md col-span-2">
+        <p className="text-yellow-800 font-semibold text-lg mb-1">
+          سبب الغياب
+        </p>
+        <p className="text-base font-medium text-gray-700">
+          {attendanceRecords?.resoneForGhaib || "لا يوجد"}
+        </p>
+      </div>
+
+      <div className="bg-yellow-100 p-6 rounded-xl shadow-md col-span-2">
+        <p className="text-yellow-800 font-semibold text-lg mb-1">
+          سبب الإجازة
+        </p>
+        <p className="text-base font-medium text-gray-700">
+          {attendanceRecords?.resoneForMojaz || "لا يوجد"}
+        </p>
+      </div>
+    </div>
+
+    <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-4">
+      <input
+        type="tel"
+        placeholder="أدخل رقم الهاتف للواتساب"
+        className="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
+        value={phone}
+        onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+      />
+      <button
+        onClick={sendWhatsApp}
+        disabled={sending}
+        className="bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg px-6 py-3 transition disabled:opacity-60"
+      >
+        {sending ? "جار الإرسال..." : "إرسال عبر واتساب"}
+      </button>
+    </div>
+  </div>
+</main>
+
   );
 }

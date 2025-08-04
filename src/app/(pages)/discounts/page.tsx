@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Plus, X } from "lucide-react";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import {
   OffersResponseItems,
   Student,
@@ -16,15 +16,15 @@ import Select from "react-select";
 export default function DiscountsPage() {
   const [showModal, setShowModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedId,setSelectedId ] = useState<number | null>(null);
-  // بيانات الفورم
-  // const [selectedStudent, setSelectedStudent] = useState("");
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [amount, setAmount] = useState("");
   const [reason, setReason] = useState("");
-  const [studentId, setStudentId] = useState<string|null>('');
-  const { data: student } = useGetOffer<StudentsResponse>(
+  const [studentId, setStudentId] = useState<string | null>("");
+
+  const { data: student } = useGetData<StudentsResponse>(
     `${process.env.NEXT_PUBLIC_BASE_URL}students`
   );
+
   const studentOptions = student?.students.map((student) => ({
     value: student.id,
     label: student.full_name,
@@ -33,16 +33,16 @@ export default function DiscountsPage() {
   const handleSelectChange = (selectedOption: any) => {
     setStudentId(selectedOption ? selectedOption.value : null);
   };
+
   const {
     data: discounts,
     loading,
     refetch,
-  } = useGetOffer<OffersResponseItems>(
+  } = useGetData<OffersResponseItems>(
     `${process.env.NEXT_PUBLIC_BASE_URL}offers`
   );
 
   const { add } = usePost();
-  // حفظ خصم جديد
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const body = {
@@ -63,8 +63,8 @@ export default function DiscountsPage() {
   };
 
   return (
-    <main className="p-10 bg-gray-100 min-h-screen" dir="rtl">
-      <div className="flex justify-between items-center mb-6">
+    <main className="p-4 sm:p-10   container w-full bg-gray-100 min-h-screen" dir="rtl">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h1 className="text-2xl font-bold text-gray-800">الخصومات</h1>
         <button
           onClick={() => setShowModal(true)}
@@ -75,9 +75,9 @@ export default function DiscountsPage() {
         </button>
       </div>
 
-      {/* جدول الخصومات */}
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
-        <table className="w-full text-right table-fixed">
+      {/* جدول الخصومات متجاوب */}
+      <div className="bg-white rounded-2xl shadow-lg overflow-x-auto border border-gray-200">
+        <table className="w-full  text-right">
           <thead className="bg-gradient-to-l from-[#E3F2FD] to-[#BBDEFB] text-[#0F5BFF]">
             <tr className="text-sm font-bold">
               <th className="p-4 w-12">#</th>
@@ -121,7 +121,7 @@ export default function DiscountsPage() {
                   >
                     حذف
                   </button>
-                  {isModalOpen && (
+                  {isModalOpen && selectedId === d.id && (
                     <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center">
                       <div className="bg-white p-6 rounded-xl shadow-lg w-[90%] max-w-sm text-center space-y-4">
                         <h2 className="text-lg font-bold text-gray-800">
@@ -154,9 +154,9 @@ export default function DiscountsPage() {
         </table>
       </div>
 
-      {/* فورم منبثقة */}
+      {/* فورم منبثقة لإضافة خصم */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-[#0000001e] bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative">
             <button
               onClick={() => setShowModal(false)}

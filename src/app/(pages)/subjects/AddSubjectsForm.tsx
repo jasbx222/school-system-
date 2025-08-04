@@ -4,7 +4,7 @@ import React, { use, useState } from "react";
 import { X } from "lucide-react";
 import usePost from "@/app/hooks/usePost";
 import Select from "react-select";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 
 const AddSubjectsForm = ({
   setIsModalFormOpen,
@@ -15,7 +15,7 @@ const AddSubjectsForm = ({
 }) => {
   const [title, setTitle] = useState("");
   const [subjectClass, setSubjectClass] = useState("");
-  const {data:classesResponse} = useGetOffer<{ classes: { id: number; title: string }[] }>(`${process.env.NEXT_PUBLIC_BASE_URL}classes`)
+  const {data:classesResponse} = useGetData<{ classes: { id: number; title: string }[] }>(`${process.env.NEXT_PUBLIC_BASE_URL}classes`)
   const { add } = usePost();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

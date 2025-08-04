@@ -1,20 +1,16 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import useGetOffer from "@/app/hooks/useGetOffer";
-import usePost from "@/app/hooks/usePost";
-import { OffersResponseItems, StudentsResponse } from "@/app/types/types";
+import { useState } from "react";
+import useGetData from "@/app/hooks/useGetData";
+import { StudentsResponse } from "@/app/types/types";
 import useUpdate from "@/app/hooks/useUpdate";
 
 export default function EditDiscountPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { data: students } = useGetOffer<StudentsResponse>(
+  const { data: students } = useGetData<StudentsResponse>(
     `${process.env.NEXT_PUBLIC_BASE_URL}students`
-  );
-  const { data: discount } = useGetOffer<OffersResponseItems>(
-    `${process.env.NEXT_PUBLIC_BASE_URL}offers/${id}`
   );
 
   const [selectedStudent, setSelectedStudent] = useState("");

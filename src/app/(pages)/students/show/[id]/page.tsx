@@ -1,7 +1,8 @@
 "use client";
 
+import ButtonBack from "@/app/(components)/(ui)/ButtonBack";
 import useDelete from "@/app/hooks/useDelete";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import { Student } from "@/app/types/types";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -14,7 +15,7 @@ export default function StudentDetails() {
   const { id } = useParams();
   const [mssg, setMessg] = useState("");
 
-  const { data, loading } = useGetOffer<{ student: Student }>(
+  const { data, loading } = useGetData<{ student: Student }>(
     `${process.env.NEXT_PUBLIC_BASE_URL}students/${id}`
   );
 
@@ -53,7 +54,6 @@ export default function StudentDetails() {
           {mssg}
         </div>
       )}
-
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-6">
         <h1 className="text-3xl font-extrabold mb-6 text-center">تفاصيل الطالب</h1>
 

@@ -1,12 +1,13 @@
 "use client";
 
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import usePost from "@/app/hooks/usePost";
 import { StudentsResponse } from "@/app/types/types";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import Select from "react-select";
+
 interface Data {
   id: number;
   title: string;
@@ -21,6 +22,7 @@ const AddResultForm = () => {
   const [subjects, setSubjects] = useState([{ title: "", degree: "" }]);
   const [success, setSuccess] = useState(false);
   const [examType, setExamType] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const type_exam_data = [
     { value: "year", label: "امتحان سنوي" },
@@ -28,15 +30,12 @@ const AddResultForm = () => {
     { value: "day", label: "امتحان يومي" },
   ];
 
-  const [loading, setLoading] = useState(false);
-
-  const { data: studentsResponse } = useGetOffer<StudentsResponse>(
+  const { data: studentsResponse } = useGetData<StudentsResponse>(
     `${process.env.NEXT_PUBLIC_BASE_URL}students`
   );
-  const { data: subjectsResponse } = useGetOffer<Subject>(
+  const { data: subjectsResponse } = useGetData<Subject>(
     `${process.env.NEXT_PUBLIC_BASE_URL}subjects`
   );
-
   const { add } = usePost();
 
   const handleAddSubject = () => {
@@ -44,13 +43,13 @@ const AddResultForm = () => {
   };
 
   const handleChangeSubject = (index: number, field: string, value: string) => {
-    const updatedSubjects = [...subjects];
-    updatedSubjects[index][field as "title" | "degree"] = value;
-    setSubjects(updatedSubjects);
+    const updated = [...subjects];
+    updated[index][field as "title" | "degree"] = value;
+    setSubjects(updated);
   };
 
   const handleSelectChange = (selectedOption: any) => {
-    setStudentId(selectedOption ? selectedOption.value : null);
+    setStudentId(selectedOption?.value || null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,25 +71,27 @@ const AddResultForm = () => {
       setSuccess(true);
       setSubjects([{ title: "", degree: "" }]);
       setStudentId(null);
-    } catch (error) {
-      console.error("حدث خطأ أثناء الإرسال:", error);
+      setExamType(null);
+    } catch (err) {
+      console.error("خطأ في الإرسال:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const studentOptions = studentsResponse?.students.map((student) => ({
-    value: student.id,
-    label: student.full_name,
+  const studentOptions = studentsResponse?.students.map((s) => ({
+    value: s.id,
+    label: s.full_name,
   }));
+
   const subjectOptions = subjectsResponse?.data.map((s) => ({
     value: s.id,
     label: s.title,
   }));
 
   return (
-    <div className="p-6 min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50">
-      <h1 className="text-3xl font-bold text-blue-800 mb-6 text-center">
+    <div className="p-4 sm:p-6 min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50">
+      <h1 className="text-2xl sm:text-3xl font-bold text-center text-blue-800 mb-6">
         إضافة نتيجة طالب
       </h1>
 
@@ -98,8 +99,12 @@ const AddResultForm = () => {
         onSubmit={handleSubmit}
         className="bg-white shadow-xl rounded-3xl p-6 max-w-2xl mx-auto space-y-6"
       >
-        <div className="flex flex-col sm:flex-row items-center mb-8 gap-6">
-          <div className="w-full sm:w-64">
+        {/* الطالب ونوع الامتحان */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="w-full">
+            <label className="text-sm mb-1 text-blue-900 block">
+              الطالب
+            </label>
             <Select
               options={studentOptions}
               isClearable
@@ -108,11 +113,14 @@ const AddResultForm = () => {
             />
           </div>
 
-          <div className="w-full sm:w-64">
+          <div className="w-full">
+            <label className="text-sm mb-1 text-blue-900 block">
+              نوع الامتحان
+            </label>
             <Select
               options={type_exam_data}
               isClearable
-              placeholder=" اختر نوع الامتحان ..."
+              placeholder="اختر نوع الامتحان..."
               onChange={(selected: any) =>
                 setExamType(selected ? selected.value : null)
               }
@@ -120,17 +128,19 @@ const AddResultForm = () => {
           </div>
         </div>
 
+        {/* المواد والدرجات */}
         <div className="space-y-4">
           <label className="block text-sm font-medium text-blue-900">
             المواد والدرجات
           </label>
+
           {subjects.map((subject, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <div className="w-full sm:w-64">
+            <div key={index} className="flex flex-col sm:flex-row gap-2">
+              <div className="w-full">
                 <Select
                   options={subjectOptions}
                   isClearable
-                  placeholder="اختر المادة ..."
+                  placeholder="اختر المادة..."
                   onChange={(selected: any) =>
                     handleChangeSubject(
                       index,
@@ -142,25 +152,28 @@ const AddResultForm = () => {
               </div>
               <input
                 type="number"
+                min={0}
                 placeholder="الدرجة"
                 value={subject.degree}
                 onChange={(e) =>
                   handleChangeSubject(index, "degree", e.target.value)
                 }
                 required
-                className="w-1/2 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-400"
+                className="w-full sm:w-32 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-400"
               />
             </div>
           ))}
+
           <button
             type="button"
             onClick={handleAddSubject}
-            className="mt-2 text-sm text-green-700 hover:underline"
+            className="text-sm text-green-700 hover:underline mt-1"
           >
-            + إضافة مادة
+            + إضافة مادة أخرى
           </button>
         </div>
 
+        {/* زر الإرسال */}
         <button
           type="submit"
           disabled={loading}

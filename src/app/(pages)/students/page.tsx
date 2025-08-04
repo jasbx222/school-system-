@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus, Pencil, Eye } from "lucide-react";
 import { Student, StudentsResponse } from "@/app/types/types";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import Link from "next/link";
 import Pagination from "@/app/(components)/(ui)/Pagination";
 import Select from "react-select"; // أضف هذا في الأعلى
@@ -12,11 +12,11 @@ export default function StudentsTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // عدد العناصر في كل صفحة
 
-  const { data: studentsResponse, loading } = useGetOffer<StudentsResponse>(
+  const { data: studentsResponse, loading } = useGetData<StudentsResponse>(
     `${process.env.NEXT_PUBLIC_BASE_URL}students`
   );
 
-  if (loading) return <p>جاري التحميل...</p>;
+  if (loading) return <p className="text-center">جاري التحميل...</p>;
 
   const students = studentsResponse?.students ?? [];
 
@@ -24,7 +24,6 @@ export default function StudentsTable() {
     student.full_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // داخل الـ component:
   const studentOptions = students.map((student) => ({
     value: student.id,
     label: student.full_name,
@@ -48,24 +47,16 @@ export default function StudentsTable() {
   };
 
   return (
-    <main className="min-h-screen p-8 bg-gradient-to-br from-[#f4f6fb] to-[#dbe3f7] font-sans text-[#0F1A35] rtl">
+    <main className="min-h-screen container w-[100%] p-8 bg-gradient-to-br from-[#f4f6fb] to-[#dbe3f7] font-sans text-[#0F1A35] rtl">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-6">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-6">
-          <div className="w-full sm:w-64">
-            <Select
-              options={studentOptions}
-              isClearable
-              placeholder="اختر طالبًا..."
-              onChange={handleSelectChange}
-            />
-          </div>
-
-        
+        <div className="w-full ">
+          <Select
+            options={studentOptions}
+            isClearable
+            placeholder="اختر طالبًا..."
+            onChange={handleSelectChange}
+          />
         </div>
-
-        <h1 className="text-3xl font-extrabold flex items-center gap-3">
-          إدارة الطلاب
-        </h1>
 
         <Link
           href={"/students/add"}
@@ -140,7 +131,6 @@ export default function StudentsTable() {
         </table>
       </div>
 
-      {/* Pagination Controls */}
       <Pagination
         totalPages={totalPages}
         currentPage={currentPage}

@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import { PlusCircle, Users2 } from "lucide-react";
 import usePost from "@/app/hooks/usePost";
 
@@ -15,21 +15,14 @@ interface SectionData {
   sections: Section[];
 }
 
-interface Class {
-  id: number;
-  title: string;
-}
 
-interface ClassData {
-  classes: Class[];
-}
 
 export default function Page() {
   const {
     data: sections,
     loading,
     refetch,
-  } = useGetOffer<SectionData>(`${process.env.NEXT_PUBLIC_BASE_URL}sections`);
+  } = useGetData<SectionData>(`${process.env.NEXT_PUBLIC_BASE_URL}sections`);
 
   if (loading)
     return (

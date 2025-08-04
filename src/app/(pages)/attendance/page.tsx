@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { getDecryptedToken } from "@/app/hooks/useDelete";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import { StudentsResponse } from "@/app/types/types";
 
 interface Student {
@@ -25,6 +25,7 @@ const AttendanceManagement = () => {
   const token = getDecryptedToken();
   const [classId, setClassId] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [resone, setResone] = useState("");
   const [selectedStudentId, setSelectedStudentId] = useState<number | null>(
     null
   );
@@ -34,7 +35,7 @@ const AttendanceManagement = () => {
   const [message, setMessage] = useState("");
 
   // جلب الصفوف
-  const { data: classes } = useGetOffer<ClassData>(
+  const { data: classes } = useGetData<ClassData>(
     `${process.env.NEXT_PUBLIC_BASE_URL}classes`
   );
 
@@ -43,7 +44,7 @@ const AttendanceManagement = () => {
     data: studentsResponse,
     loading: studentsLoading,
     refetch: refetchStudents,
-  } = useGetOffer<StudentsResponse>(classId?
+  } = useGetData<StudentsResponse>(classId?
     `${process.env.NEXT_PUBLIC_BASE_URL}students/${classId}/class`:''
   );
 
@@ -73,6 +74,7 @@ const AttendanceManagement = () => {
           body: JSON.stringify({
             student_id: selectedStudentId,
             status: attendanceStatus === "present" ? "مجاز" : "غائب",
+            reason: resone,
           }),
         }
       );
@@ -173,6 +175,14 @@ const AttendanceManagement = () => {
               غائب
             </label>
           </div>
+          <textarea
+            placeholder="السبب (اختياري)"
+            className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={3}
+            onChange={(e) => setResone(e.target.value)}
+            value={resone}
+          ></textarea>
+     
 
           <button
             onClick={handleSubmitAttendance}

@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { useParams } from "next/navigation";
-import useShow from "@/app/hooks/useShow";
+import useGetData from "@/app/hooks/useGetData";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { GraduationCap } from "lucide-react";
@@ -25,9 +25,9 @@ const Page = () => {
   const { id } = useParams();
   const contentRef = useRef(null);
 
-  const { data: result, loading } = useShow<Result>(
-    `${process.env.NEXT_PUBLIC_BASE_URL}results`,
-    id
+  const { data: result, loading } = useGetData<Result>(
+    `${process.env.NEXT_PUBLIC_BASE_URL}results/${id}`,
+    
   );
   const translateExam = (ex: string) => {
     switch (ex) {

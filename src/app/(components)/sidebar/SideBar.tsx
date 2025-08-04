@@ -19,14 +19,15 @@ import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import Links from "./Links";
 import { getDecryptedToken } from "@/app/hooks/useDelete";
-import useGetOffer from "@/app/hooks/useGetOffer";
+import useGetData from "@/app/hooks/useGetData";
 import { ProfileResponse } from "@/app/types/types";
+import ExpensesLinks from "./ExpensesLinks";
 
 const SideBar = () => {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const token = getDecryptedToken();
-  const { data: profile, loading } = useGetOffer<ProfileResponse>(
+  const { data: profile, loading } = useGetData<ProfileResponse>(
     `${process.env.NEXT_PUBLIC_BASE_URL}profile`
   );
 
@@ -47,7 +48,7 @@ const SideBar = () => {
     { name: "الرئيسية", url: "/home", icon: BookOpen },
     { name: "إدارة الطلاب", url: "/students", icon: UserCheck },
     { name: "إدارة التفقد", url: "/attendance", icon: CircleCheck },
-    { name: "المصاريف", url: "/expenses", icon: PiggyBank },
+
     { name: "الصفوف", url: "/classes", icon: School },
     { name: "الخصومات", url: "/discounts", icon: BadgePercent },
   ];
@@ -131,6 +132,7 @@ const SideBar = () => {
                 </li>
               );
             })}
+            <ExpensesLinks/>
 
             <Links />
           </ul>

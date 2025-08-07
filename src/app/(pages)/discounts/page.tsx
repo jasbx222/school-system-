@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Plus, X } from "lucide-react";
 import useGetData from "@/app/hooks/useGetData";
 import {
   OffersResponseItems,
-  Student,
   StudentsResponse,
 } from "@/app/types/types";
 import usePost from "@/app/hooks/usePost";
@@ -13,7 +12,7 @@ import useDelete from "@/app/hooks/useDelete";
 import Link from "next/link";
 import Select from "react-select";
 
-export default function DiscountsPage() {
+export default function Page() {
   const [showModal, setShowModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -36,7 +35,6 @@ export default function DiscountsPage() {
 
   const {
     data: discounts,
-    loading,
     refetch,
   } = useGetData<OffersResponseItems>(
     `${process.env.NEXT_PUBLIC_BASE_URL}offers`

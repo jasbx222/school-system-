@@ -169,3 +169,18 @@ export interface AddInsType  {
       class_room_id: string;
       class_section_id: string;
     };
+
+    type Account = {
+  id: number;
+  name: string;
+  code: string;
+  balance: string;
+  type: string | null;
+  parent_id: number | null;
+  created_at: string; // تاريخ بصيغة ISO
+  updated_at: string; // تاريخ بصيغة ISO
+  school_id: number;
+  children_recursive: Account[]; // نفس النوع بشكل متداخل (Recursive)
+};
+
+export type Accounts = Account[];

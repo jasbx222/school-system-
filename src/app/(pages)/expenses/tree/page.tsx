@@ -7,12 +7,15 @@ type AccountNode = {
   id: number;
   name: string;
   code: string;
-  balance:string;
+  balance: number;
+  type: string;
   children_recursive: AccountNode[];
 };
 
 export default function AccountTree() {
-  const { data } = useGetData<AccountNode[]>(`${process.env.NEXT_PUBLIC_BASE_URL}accounts`);
+  const { data } = useGetData<AccountNode[]>(
+    `${process.env.NEXT_PUBLIC_BASE_URL}accounts`
+  );
 
   if (!data) return null;
 
@@ -36,8 +39,15 @@ function TreeNode({ node }: { node: AccountNode }) {
       >
         <span className="text-gray-500 font-mono w-16">{node.code}</span>
         <span className="font-semibold">{node.name}</span>
-        <span className="font-semibold">{node.balance}</span>
-
+    
+          <span
+            className={`font-semibold text-gray-800 ${
+              node?.balance < 0 ? "text-red-500" : "text-green-500"
+            }`}
+          >
+            {node.balance}
+          </span>
+     
         {node.children_recursive.length > 0 && (
           <span className="text-xs text-gray-400 ml-2">
             {expanded ? "▼" : "▶"}

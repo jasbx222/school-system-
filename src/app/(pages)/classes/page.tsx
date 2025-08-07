@@ -1,9 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
 import useGetData from "@/app/hooks/useGetData";
 import { Building2, Plus } from "lucide-react";
-import usePost from "@/app/hooks/usePost";
 
 interface Class {
   id: number;
@@ -19,7 +17,6 @@ export default function Page() {
   const {
     data: classes,
     loading,
-    refetch,
   } = useGetData<ClassData>(`${process.env.NEXT_PUBLIC_BASE_URL}classes`);
 
   if (loading)
@@ -56,36 +53,6 @@ export default function Page() {
           ))}
         </div>
       </div>
-
-      {/* نافذة منبثقة */}
-      {/* {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
-            <h2 className="text-xl font-bold text-[#0F1A35] mb-4">إضافة صف جديد</h2>
-            <input
-              type="text"
-              value={newClassName}
-              onChange={(e) => setNewClassName(e.target.value)}
-              placeholder="أدخل اسم الصف"
-              className="w-full rounded-lg border border-gray-300 p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-[#0F5BFF]"
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
-              >
-                إلغاء
-              </button>
-              <button
-                onClick={handleAddClass}
-                className="px-4 py-2 rounded-lg bg-[#0F5BFF] text-white hover:bg-[#0c4be0]"
-              >
-                حفظ الصف
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
     </main>
   );
 }

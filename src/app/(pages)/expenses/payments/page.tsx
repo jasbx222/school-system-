@@ -1,148 +1,125 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Select from "react-select";
-import { CalendarDays, DollarSign } from "lucide-react";
-
-const accounts = [
-  { label: "أحمد محمد", value: 1 },
-  { label: "شركة النور", value: 2 },
-  { label: "مصرف الرافدين", value: 3 },
-];
-
-const paymentMethods = [
-  { label: "نقدًا", value: "cash" },
-  { label: "تحويل بنكي", value: "bank" },
-  { label: "شيك", value: "cheque" },
-];
+import { Button, InputDate, InputText, TextArea } from "../Form";
+import useGetData from "@/app/hooks/useGetData";
+import { Accounts } from "@/app/types/types";
+import usePost from "@/app/hooks/usePost";
 
 export default function Page() {
   const [formData, setFormData] = useState({
-    account_id: null,
+    account_id: null as string | null,
     amount: "",
     date: "",
-    payment_method: null,
-    document_number: "",
-    description: "",
+    method: "",
+    vouchers_number: "",
+    notes: "",
   });
+  const [message, setMessage] = useState("");
 
-  const handleChange = (e: any) => {
+  const { data: accounts } = useGetData<Accounts>(`${process.env.NEXT_PUBLIC_BASE_URL}accounts`);
+
+ 
+ const flattenAccounts = (
+  accounts: Accounts, 
+  level = 0
+): { value: string; label: string }[] => {
+  let result: { value: string; label: string }[] = [];
+
+  for (const acc of accounts) {
+    if (acc.type === 'expense') {  
+      result.push({
+        value: String(acc.id),
+        label: `${'—'.repeat(level)} ${acc.name}`,
+      });
+
+      if (acc.children_recursive?.length > 0) {
+        result = result.concat(flattenAccounts(acc.children_recursive, level + 1));
+      }
+    } else {
+      // حتى لو النوع مش income، ممكن الأطفال منهم income
+      if (acc.children_recursive?.length > 0) {
+        result = result.concat(flattenAccounts(acc.children_recursive, level + 1));
+      }
+    }
+  }
+
+  return result;
+};
+
+const accountOptions = accounts ? flattenAccounts(accounts) : [];
+
+
+  // الحصول على العنصر المختار
+  const selectedAccount = accountOptions.find((opt) => opt.value === formData.account_id) || null;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSelectChange = (value: any, name: string) => {
-    setFormData({ ...formData, [name]: value });
+  const handleAccountSelect = (selected: { value: string; label: string } | null) => {
+    setFormData({ ...formData, account_id: selected ? selected.value : null });
   };
-
+  const {add,response}= usePost();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Receipt Data:", formData);
-    // send to API...
+    add(`${process.env.NEXT_PUBLIC_BASE_URL}payment_vouchers`, formData);
+    setMessage("تم إضافة الإيصال بنجاح");
+
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-md space-y-6 rtl text-right"
-    >
-      <h2 className="text-2xl font-bold text-blue-600 mb-4">إيصال الدفع</h2>
-
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 space-y-4">
+      {
+        message && <div className="text-green-600">{message}</div>
+      }
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          اسم الحساب
+        <label className="block mb-2 text-sm font-medium text-gray-700">
+          الحساب
         </label>
         <Select
-          options={accounts}
-          value={formData.account_id}
-          onChange={(val) => handleSelectChange(val, "account_id")}
-          placeholder="اختر الحساب"
+          options={accountOptions}
+          value={selectedAccount}
+          onChange={handleAccountSelect}
+          className="w-full"
+          placeholder="اختر حسابًا"
+          isClearable
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            المبلغ
-          </label>
-          <div className="relative">
-            <input
-              type="number"
-              name="amount"
-              value={formData.amount}
-              onChange={handleChange}
-              placeholder="0.00"
-              className="w-full border rounded-md py-2 px-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <DollarSign className="absolute top-2.5 right-3 text-gray-400" size={16} />
-          </div>
-        </div>
+      <InputText
+        onChange={handleChange}
+        value={formData.amount}
+        name="amount"
+        placeholder="المبلغ"
+      />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            التاريخ
-          </label>
-          <div className="relative">
-            <input
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              className="w-full border rounded-md py-2 px-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <CalendarDays className="absolute top-2.5 right-3 text-gray-400" size={16} />
-          </div>
-        </div>
-      </div>
+      <InputDate name="date" value={formData.date} onChange={handleChange} />
+      
+      <InputText
+        name="vouchers_number"
+        value={formData.vouchers_number}
+        onChange={handleChange}
+        placeholder="رقم الوثيقة"
+      />
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          طريقة الدفع
-        </label>
-        <Select
-          options={paymentMethods}
-          value={formData.payment_method}
-          onChange={(val) => handleSelectChange(val, "payment_method")}
-          placeholder="اختر الطريقة"
-        />
-      </div>
+      <InputText
+        name="method"
+        value={formData.method}
+        onChange={handleChange}
+        placeholder="طريقة الدفع"
+      />
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          رقم المستند
-        </label>
-        <input
-          type="text"
-          name="document_number"
-          value={formData.document_number}
-          onChange={handleChange}
-          placeholder="مثال: RC-2025-001"
-          className="w-full border rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+      <TextArea
+        name="notes"
+        value={formData.notes}
+        onChange={handleChange}
+        placeholder="الوصف"
+        rows={3}
+      />
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          الوصف / ملاحظات
-        </label>
-        <textarea
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="اكتب تفاصيل إضافية عن الدفع..."
-          rows={3}
-          className="w-full border rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      <div className="text-center">
-        <button
-          type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition"
-        >
-         دفع
-          إيصال
-        </button>
-      </div>
+      <Button type="submit">إضافة إيصال</Button>
     </form>
   );
 }

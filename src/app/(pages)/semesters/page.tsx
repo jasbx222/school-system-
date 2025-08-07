@@ -106,53 +106,7 @@ export default function Page() {
         )}
       </div>
 
-      {/* Modal */}
-      {/* {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl space-y-4">
-            <h2 className="text-xl font-bold text-[#0F1A35]">
-              إضافة فصل دراسي جديد
-            </h2>
-
-            <input
-              type="text"
-              placeholder="عنوان الفصل الدراسي"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-[#0F5BFF]"
-            />
-            <input
-              type="date"
-              placeholder="من تاريخ"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-[#0F5BFF]"
-            />
-            <input
-              type="date"
-              placeholder="إلى تاريخ"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-[#0F5BFF]"
-            />
-
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
-              >
-                إلغاء
-              </button>
-              <button
-                onClick={handleAddSemester}
-                className="px-4 py-2 rounded-lg bg-[#0F5BFF] text-white hover:bg-[#0c4be0]"
-              >
-                حفظ الفصل
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
+     
     </main>
   );
 }

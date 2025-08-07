@@ -5,12 +5,6 @@ import { getDecryptedToken } from "@/app/hooks/useDelete";
 import useGetData from "@/app/hooks/useGetData";
 import { StudentsResponse } from "@/app/types/types";
 
-interface Student {
-  id: number;
-  full_name: string;
-}
-
-
 interface Class {
   id: number;
   title: string;

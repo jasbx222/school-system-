@@ -26,7 +26,7 @@ interface SectionData {
   sections: Section[];
 }
 
-export default function TransferForm() {
+export default function Page() {
   const [student, setStudent] = useState<Option | null>(null);
   const [fromClass, setFromClass] = useState<Option | null>(null);
   const [fromSection, setFromSection] = useState<Option | null>(null);

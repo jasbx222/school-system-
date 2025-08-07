@@ -6,7 +6,7 @@ import useGetData from "@/app/hooks/useGetData";
 import { StudentsResponse } from "@/app/types/types";
 import useUpdate from "@/app/hooks/useUpdate";
 
-export default function EditDiscountPage() {
+export default function Page() {
   const { id } = useParams();
   const router = useRouter();
   const { data: students } = useGetData<StudentsResponse>(
